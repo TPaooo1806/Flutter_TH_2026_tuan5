@@ -1,52 +1,66 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_model.dart';
 import 'preference_service.dart';
 
 class AuthService {
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   /// ============================
   /// REGISTER
   /// ============================
-  static Future<bool> register(UserModel user) async {
+  static Future<String?> register(UserModel user) async {
     try {
-      // Lưu User vào SharedPreferences
-      await PreferenceService.saveUser(user);
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: user.email,
+        password: user.password,
+      );
+      
+      // Save user info to Firestore
+      await _firestore.collection('users').doc(userCredential.user!.uid).set({
+        'fullName': user.fullName,
+        'email': user.email,
+        'phone': user.phone,
+        'avatar': user.avatar,
+        'gender': user.gender,
+        'city': user.city,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
 
-      return true;
+      return null; // Thành công
+    } on FirebaseAuthException catch (e) {
+      print("FirebaseAuthException: ${e.code} - ${e.message}");
+      if (e.code == 'weak-password') return 'Mật khẩu quá yếu.';
+      if (e.code == 'email-already-in-use') return 'Email đã được sử dụng.';
+      if (e.code == 'operation-not-allowed') return 'Bạn chưa bật phương thức đăng nhập bằng Email/Password trong Firebase Console.';
+      return "Lỗi Auth (${e.code}): ${e.message}";
     } catch (e) {
-      print("Register Error: $e");
-      return false;
+      print("Lỗi hệ thống: $e");
+      return "Lỗi hệ thống: $e";
     }
   }
 
   /// ============================
   /// LOGIN
   /// ============================
-  static Future<bool> login({
+  static Future<String?> login({
     required String email,
     required String password,
   }) async {
     try {
-      // Lấy User từ SharedPreferences
-      UserModel? user = await PreferenceService.getUser();
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      
+      // Lưu lịch sử đăng nhập local
+      await PreferenceService.addHistory(email);
 
-      if (user == null) {
-        return false;
-      }
-
-      // Kiểm tra Email và Password
-      if (user.email == email && user.password == password) {
-        // Lưu trạng thái đăng nhập
-        await PreferenceService.setLogin(true);
-
-        // Lưu lịch sử đăng nhập
-        await PreferenceService.addHistory(email);
-
-        return true;
-      }
-
-      return false;
+      return null; // Thành công
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found' || e.code == 'invalid-email' || e.code == 'invalid-credential') return 'Sai tài khoản hoặc mật khẩu.';
+      if (e.code == 'wrong-password') return 'Sai mật khẩu.';
+      return e.message;
     } catch (e) {
-      print("Login Error: $e");
-      return false;
+      return e.toString();
     }
   }
 
@@ -54,21 +68,41 @@ class AuthService {
   /// USER HIỆN TẠI
   /// ============================
   static Future<UserModel?> currentUser() async {
-    return await PreferenceService.getUser();
+    User? user = _auth.currentUser;
+    if (user != null) {
+      try {
+        DocumentSnapshot doc = await _firestore.collection('users').doc(user.uid).get();
+        if (doc.exists) {
+          final data = doc.data() as Map<String, dynamic>;
+          return UserModel(
+            fullName: data['fullName'] ?? 'No Name',
+            email: data['email'] ?? user.email ?? '',
+            phone: data['phone'] ?? '',
+            password: '', // We don't fetch password from DB
+            avatar: data['avatar'] ?? 'https://i.pravatar.cc/300',
+            gender: data['gender'] ?? 'Male',
+            city: data['city'] ?? 'Ho Chi Minh',
+          );
+        }
+      } catch (e) {
+        print("Lỗi lấy dữ liệu user: $e");
+      }
+    }
+    return null;
   }
 
   /// ============================
   /// KIỂM TRA ĐĂNG NHẬP
   /// ============================
-  static Future<bool> isLogin() async {
-    return await PreferenceService.isLogin();
+  static bool isLogin() {
+    return _auth.currentUser != null;
   }
 
   /// ============================
   /// LOGOUT
   /// ============================
   static Future<void> logout() async {
-    await PreferenceService.logout();
+    await _auth.signOut();
   }
 
   /// ============================
@@ -82,23 +116,7 @@ class AuthService {
   /// KIỂM TRA EMAIL ĐÃ TỒN TẠI
   /// ============================
   static Future<bool> isExistEmail(String email) async {
-    try {
-      UserModel? user = await PreferenceService.getUser();
-
-      if (user == null) {
-        return false;
-      }
-
-      print("========== USER SAVED ==========");
-      print("Name     : ${user.fullName}");
-      print("Email    : ${user.email}");
-      print("Password : ${user.password}");
-      print("===============================");
-
-      return user.email.trim().toLowerCase() == email.trim().toLowerCase();
-    } catch (e) {
-      print("Check Email Error: $e");
-      return false;
-    }
+    // FirebaseAuth sẽ tự báo lỗi nếu email trùng trong lúc register
+    return false;
   }
 }

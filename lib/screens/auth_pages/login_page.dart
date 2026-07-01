@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
       isLoading = true;
     });
 
-    bool success = await AuthService.login(
+    String? errorMsg = await AuthService.login(
       email: emailController.text.trim(),
       password: passwordController.text.trim(),
     );
@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
       isLoading = false;
     });
 
-    if (success) {
+    if (errorMsg == null) {
       // Lấy lịch sử đăng nhập từ SharedPreferences
       List<String> history = await AuthService.getHistory();
 
@@ -65,6 +65,13 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const MainPage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMsg),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }

@@ -71,7 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
       city: city,
     );
 
-    bool success = await AuthService.register(user);
+    String? errorMsg = await AuthService.register(user);
 
     if (!mounted) return;
 
@@ -79,7 +79,7 @@ class _RegisterPageState extends State<RegisterPage> {
       isLoading = false;
     });
 
-    if (success) {
+    if (errorMsg == null) {
       fullNameController.clear();
       emailController.clear();
       phoneController.clear();
@@ -101,8 +101,8 @@ class _RegisterPageState extends State<RegisterPage> {
       Navigator.pop(context, true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Register Failed"),
+        SnackBar(
+          content: Text(errorMsg),
           backgroundColor: Colors.red,
         ),
       );

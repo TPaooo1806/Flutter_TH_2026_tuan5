@@ -6,7 +6,8 @@ import '../../screens/main_pages/history_page.dart';
 import '../../screens/main_pages/home_page.dart';
 import '../../screens/main_pages/profile_page.dart';
 import '../../screens/main_pages/setting_page.dart';
-import '../../screens/main_pages/product_categories_page.dart';
+import '../../screens/main_pages/categoryfb_page.dart';
+import '../../screens/main_pages/productfb_page.dart';
 import '../../models/menu_item.dart';
 import '../../services/auth_service.dart';
 import '../auth_pages/login_page.dart';
@@ -40,9 +41,14 @@ class _MainPageState extends State<MainPage> {
 
   final List<MenuItemModel> drawerMenus = [
     MenuItemModel(
-      title: "Product Categories",
+      title: "Categories Firebase",
       icon: Icons.category_rounded,
-      route: "/productCategories",
+      route: "/categoriesFb",
+    ),
+    MenuItemModel(
+      title: "Products Firebase",
+      icon: Icons.inventory_2_rounded,
+      route: "/productsFb",
     ),
 
     MenuItemModel(title: "Settings", icon: Icons.settings, route: "/settings"),
@@ -86,11 +92,18 @@ class _MainPageState extends State<MainPage> {
 
   void onDrawerSelect(MenuItemModel menu) {
     switch (menu.route) {
-      case "/productCategories":
+      case "/categoriesFb":
         setState(() {
           currentIndex = 0; // focus Home
-          currentBody = const ProductCategoriesPage();
-          currentTitle = "Product Categories";
+          currentBody = const CategoryFbPage();
+          currentTitle = "Categories Firebase";
+        });
+        break;
+      case "/productsFb":
+        setState(() {
+          currentIndex = 0; // focus Home
+          currentBody = const ProductFbPage();
+          currentTitle = "Products Firebase";
         });
         break;
       case "/settings":
