@@ -49,8 +49,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
     bool exist = await AuthService.isExistEmail(emailController.text.trim());
 
-    if (!mounted) return;
-
     if (exist) {
       ScaffoldMessenger.of(
         context,

@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'login_page.dart';
+import '../main_pages/main_page.dart';
+import '../../services/auth_service.dart';
 
 class SlashPage extends StatefulWidget {
   const SlashPage({super.key});
@@ -21,6 +23,8 @@ class _SlashPageState extends State<SlashPage> {
   }
 
   void startLoading() {
+    // 5 seconds total
+
     timer = Timer.periodic(const Duration(milliseconds: 100), (t) {
       setState(() {
         progress += 0.02; // 50 lần = 5 giây
@@ -33,16 +37,27 @@ class _SlashPageState extends State<SlashPage> {
     });
   }
 
-  void goToLogin() {
+  void goToLogin() async {
     if (isNavigated) return;
 
     isNavigated = true;
     timer?.cancel();
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const LoginPage()),
-    );
+    bool isLogin = await AuthService.isLogin();
+
+    if (!mounted) return;
+
+    if (isLogin) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const MainPage()),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginPage()),
+      );
+    }
   }
 
   @override

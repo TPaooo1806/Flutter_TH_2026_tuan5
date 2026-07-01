@@ -7,7 +7,6 @@ import '../../screens/main_pages/home_page.dart';
 import '../../screens/main_pages/profile_page.dart';
 import '../../screens/main_pages/setting_page.dart';
 import '../../screens/main_pages/product_categories_page.dart';
-import '../../screens/main_pages/product_types_page.dart';
 import '../../models/menu_item.dart';
 import '../../services/auth_service.dart';
 import '../auth_pages/login_page.dart';
@@ -41,20 +40,11 @@ class _MainPageState extends State<MainPage> {
 
   final List<MenuItemModel> drawerMenus = [
     MenuItemModel(
-      title: "Histories",
-      icon: Icons.history,
-      route: "/histories",
+      title: "Product Categories",
+      icon: Icons.category_rounded,
+      route: "/productCategories",
     ),
-    MenuItemModel(
-      title: "Danh mục Hàng hóa",
-      icon: Icons.category,
-      route: "/product_categories",
-    ),
-    MenuItemModel(
-      title: "Loại Hàng Hóa",
-      icon: Icons.list_alt,
-      route: "/product_types",
-    ),
+
     MenuItemModel(title: "Settings", icon: Icons.settings, route: "/settings"),
     MenuItemModel(title: "About", icon: Icons.info, route: "/about"),
     MenuItemModel(title: "Logout", icon: Icons.logout, route: "/logout"),
@@ -96,43 +86,18 @@ class _MainPageState extends State<MainPage> {
 
   void onDrawerSelect(MenuItemModel menu) {
     switch (menu.route) {
-      case "/histories":
-        setState(() {
-          currentIndex = 0; // focus Home
-          currentBody = const HistoryPage();
-          currentTitle = "History";
-        });
-        break;
-
-      case "/product_categories":
+      case "/productCategories":
         setState(() {
           currentIndex = 0; // focus Home
           currentBody = const ProductCategoriesPage();
-          currentTitle = "Danh mục Hàng hóa";
+          currentTitle = "Product Categories";
         });
         break;
-
-      case "/product_types":
-        setState(() {
-          currentIndex = 0; // focus Home
-          currentBody = const ProductTypesPage();
-          currentTitle = "Loại Hàng Hóa";
-        });
-        break;
-
       case "/settings":
         setState(() {
-          currentIndex = 3; // focus Setting
+          currentIndex = 0; // focus Home
           currentBody = const SettingPage();
           currentTitle = "Settings";
-        });
-        break;
-
-      case "/profile":
-        setState(() {
-          currentIndex = 2; // focus Profile
-          currentBody = const ProfilePage();
-          currentTitle = "Profile";
         });
         break;
 

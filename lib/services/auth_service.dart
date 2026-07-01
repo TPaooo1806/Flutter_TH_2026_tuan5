@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import '../models/user_model.dart';
 import 'preference_service.dart';
 
@@ -13,7 +12,7 @@ class AuthService {
 
       return true;
     } catch (e) {
-      debugPrint("Register Error: $e");
+      print("Register Error: $e");
       return false;
     }
   }
@@ -46,7 +45,7 @@ class AuthService {
 
       return false;
     } catch (e) {
-      debugPrint("Login Error: $e");
+      print("Login Error: $e");
       return false;
     }
   }
@@ -90,15 +89,15 @@ class AuthService {
         return false;
       }
 
-      debugPrint("========== USER SAVED ==========");
-      debugPrint("Name     : ${user.fullName}");
-      debugPrint("Email    : ${user.email}");
-      debugPrint("Password : ${user.password}");
-      debugPrint("===============================");
+      print("========== USER SAVED ==========");
+      print("Name     : ${user.fullName}");
+      print("Email    : ${user.email}");
+      print("Password : ${user.password}");
+      print("===============================");
 
       return user.email.trim().toLowerCase() == email.trim().toLowerCase();
     } catch (e) {
-      debugPrint("Check Email Error: $e");
+      print("Check Email Error: $e");
       return false;
     }
   }

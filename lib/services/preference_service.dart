@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,11 +20,11 @@ class PreferenceService {
 
     await prefs.setString(userKey, jsonEncode(user.toJson()));
     // in ra màn hình để test
-    debugPrint("===== SAVE USER =====");
-    debugPrint("Name     : ${user.fullName}");
-    debugPrint("Email    : ${user.email}");
-    debugPrint("Password : ${user.password}");
-    debugPrint("=====================");
+    print("===== SAVE USER =====");
+    print("Name     : ${user.fullName}");
+    print("Email    : ${user.email}");
+    print("Password : ${user.password}");
+    print("=====================");
   }
 
   //=============================
@@ -42,10 +41,10 @@ class PreferenceService {
 
     UserModel user = UserModel.fromJson(jsonDecode(json));
 
-    debugPrint("===== LOAD USER =====");
-    debugPrint("Name     : ${user.fullName}");
-    debugPrint("Email    : ${user.email}");
-    debugPrint("=====================");
+    print("===== LOAD USER =====");
+    print("Name     : ${user.fullName}");
+    print("Email    : ${user.email}");
+    print("=====================");
 
     return user;
   }

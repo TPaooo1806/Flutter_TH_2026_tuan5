@@ -20,22 +20,15 @@ class _HistoryPageState extends State<HistoryPage> {
   }
 
   Future<void> loadHistory() async {
-    final results = await Future.wait([
-      AuthService.getHistory(),
-      // Giả lập tải 1 dữ liệu khác song song (ví dụ delay)
-      Future.delayed(const Duration(milliseconds: 500)),
-    ]);
+    history = await AuthService.getHistory();
 
-    history = results[0] as List<String>;
-    if (mounted) setState(() {});
+    setState(() {});
   }
 
   Future<void> clearHistory() async {
     await PreferenceService.clearHistory();
 
     loadHistory();
-
-    if (!mounted) return;
 
     ScaffoldMessenger.of(
       context,
@@ -45,13 +38,10 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Login History"),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        actions: [
-          IconButton(icon: const Icon(Icons.delete), onPressed: clearHistory),
-        ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: clearHistory,
+        backgroundColor: Colors.red,
+        child: const Icon(Icons.delete, color: Colors.white),
       ),
 
       body: history.isEmpty

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/auth_service.dart';
 
 import 'register_page.dart';
@@ -28,25 +27,6 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadRememberMe();
-  }
-
-  Future<void> _loadRememberMe() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedEmail = prefs.getString('remember_email');
-    final savedPassword = prefs.getString('remember_password');
-    if (savedEmail != null && savedPassword != null) {
-      setState(() {
-        emailController.text = savedEmail;
-        passwordController.text = savedPassword;
-        rememberMe = true;
-      });
-    }
-  }
-
   Future<void> login() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -66,15 +46,6 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     if (success) {
-      final prefs = await SharedPreferences.getInstance();
-      if (rememberMe) {
-        await prefs.setString('remember_email', emailController.text.trim());
-        await prefs.setString('remember_password', passwordController.text.trim());
-      } else {
-        await prefs.remove('remember_email');
-        await prefs.remove('remember_password');
-      }
-
       // Lấy lịch sử đăng nhập từ SharedPreferences
       List<String> history = await AuthService.getHistory();
 
@@ -83,8 +54,6 @@ class _LoginPageState extends State<LoginPage> {
       for (String item in history) {
         debugPrint(item);
       }
-
-      if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

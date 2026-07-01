@@ -33,15 +33,6 @@ class AppDrawer extends StatelessWidget {
                 ),
               ),
 
-              ListTile(
-                leading: const Icon(Icons.edit),
-                title: const Text("Edit Account"),
-                onTap: () {
-                  Navigator.pop(context);
-                  onSelect(MenuItemModel(title: "Profile", icon: Icons.person, route: "/profile"));
-                },
-              ),
-
               Expanded(
                 child: ListView.builder(
                   itemCount: menus.length,

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "814250007597",
+    "project_id": "shop-demo-a1668",
+    "storage_bucket": "shop-demo-a1668.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:814250007597:android:02e141ab16e74ab06aaca4",
+        "android_client_info": {
+          "package_name": "com.example.tuan5"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwjj3Q4sbZmlyBglbuFt8penCiDbRWQ5g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
